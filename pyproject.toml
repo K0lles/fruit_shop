@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "fruit-shop"
+version = "0.1.0"
+description = ""
+authors = ["K0lles <oleksijkolotilo63@gmail.com>"]
+readme = "README.md"
+packages = [{include = "fruit_shop"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+django = "3.2.15"
+channels = {extras = ["daphne"], version = "^4.0.0"}
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
