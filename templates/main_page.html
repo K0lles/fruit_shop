@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>My Fruit Shop</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
     <style>
         .navbar-nav > .nav-item {
             margin-right: 25px;
@@ -213,29 +214,53 @@
         </div>
     </div>
 
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js" ></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
-        document.getElementById('action-list').style.height = (window.innerHeight - 159).toString() + 'px';
-        const chatSocket = new WebSocket('ws://' + window.location.host + 'ws/chat');
+        toastr.options = {
+          "closeButton": true,
+          "debug": false,
+          "newestOnTop": false,
+          "progressBar": false,
+          "preventDuplicates": false,
+          "onclick": null,
+          "showDuration": "300",
+          "hideDuration": "1000",
+          "timeOut": "5000",
+          "extendedTimeOut": "1000",
+          "showEasing": "swing",
+          "hideEasing": "linear",
+          "showMethod": "fadeIn",
+          "hideMethod": "fadeOut"
+        };
 
-        document.querySelector('#id_message').onkeyup(function (event) {
+        document.getElementById('action-list').style.height = (window.innerHeight - 159).toString() + 'px';
+        const chatSocket = new WebSocket('ws://' + window.location.host + '/ws/chat/');
+
+        document.querySelector('#id_message').onkeyup = function (event) {
             if (event.keyCode === 13) {
                 document.querySelector('#send-message').click();
             }
-        })
+        }
 
-        document.querySelector('#send-message').onclick(function (event) {
-            let message = document.querySelector('#id_message').value;
-            chatSocket.send(JSON.stringify({'message': message, 'who': 'me'}))
-        })
+        document.querySelector('#send-message').onclick = function (event) {
+            let message_field = document.querySelector('#id_message');
+            let message_text = message_field.value;
+            if (message_text !== '') {
+                try {
+                    message_field.value = '';
+                    chatSocket.send(JSON.stringify({'message': message_text}))
+                } catch (e) {
+                    toastr.error("Повідомлення не було відправлено.", 'Помилка');
+                    message_field.value = message_text;
+                }
+            }
+        }
 
-        chatSocket.onmessage(function (event) {
-            let message = JSON.parse(event.data)
-            document.querySelector('.chat-messages').append(
-                `<p>${message}</p>`
-            )
-        })
-        //chatSocket.send(JSON.stringify({'message': 'hello1'}));
+        chatSocket.onmessage = function (event) {
+            document.querySelector('.chat-messages').innerHTML += `<p>${event.data}</p>`;
+        }
     </script>
 </body>
 </html>
