@@ -9,6 +9,9 @@ packages = [{include = "fruit_shop"}]
 [tool.poetry.dependencies]
 python = "^3.10"
 django = "3.2.15"
+python-environ = "^0.4.54"
+psycopg2-binary = "^2.9.6"
+channels-redis = "^4.1.0"
 channels = {extras = ["daphne"], version = "^4.0.0"}
 
 
