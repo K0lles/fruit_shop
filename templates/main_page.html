@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,13 +19,14 @@
 </head>
 <body>
     <!-- Navigation Bar -->
+    {% csrf_token %}
     <div class="row">
         <nav class="navbar justify-content-center navbar-expand-lg navbar-light" style="background-color: #E1CC63;">
             <div class="container-fluid">
                 <a class="navbar-brand float-left" href="#">MyFruitShop</a>
                 <div class="navbar-collapse" id="navbarNav" style="flex-grow: unset;">
-                    <form id="login-form" method="post" action="#">
-                        <ul class="navbar-nav justify-content-center ms-auto">
+                    <ul id="header-list" class="navbar-nav justify-content-center ms-auto">
+                        {% if request.user.is_anonymous %}
                             <li class="nav-item">
                                 <input type="text" placeholder="Username" id="id_username" name="username" class="form-control">
                             </li>
@@ -31,10 +34,17 @@
                                 <input type="password" placeholder="Password" id="id_password" name="password" class="form-control">
                             </li>
                             <li>
-                                <button type="submit" class="btn btn-success">Login</button>
+                                <button id="login-button" type="button" class="btn btn-success" onclick="login()">Login</button>
                             </li>
-                        </ul>
-                    </form>
+                        {% else %}
+                            <li class="nav-item" style="vertical-align: middle;">
+                                <p>{{ request.user.username }}</p>
+                            </li>
+                            <li class="nav-item">
+                                <button type="button" id="logout-button" class="btn btn-danger" onclick="logout()">Logout</button>
+                            </li>
+                        {% endif %}
+                    </ul>
                 </div>
             </div>
         </nav>
@@ -217,6 +227,8 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js" ></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+    <script src="{% static 'js/scripts.js' %}"></script>
     <script>
         toastr.options = {
           "closeButton": true,
@@ -236,7 +248,7 @@
         };
 
         document.getElementById('action-list').style.height = (window.innerHeight - 159).toString() + 'px';
-        const chatSocket = new WebSocket('ws://' + window.location.host + '/ws/chat/');
+        let chatSocket = new WebSocket('ws://' + window.location.host + '/ws/chat/');
 
         document.querySelector('#id_message').onkeyup = function (event) {
             if (event.keyCode === 13) {
@@ -244,14 +256,14 @@
             }
         }
 
-        document.querySelector('#send-message').onclick = function (event) {
+        document.querySelector('#send-message').onclick = function () {
             let message_field = document.querySelector('#id_message');
             let message_text = message_field.value;
             if (message_text !== '') {
                 try {
                     message_field.value = '';
                     chatSocket.send(JSON.stringify({'message': message_text}))
-                } catch (e) {
+                } catch (error) {
                     toastr.error("Повідомлення не було відправлено.", 'Помилка');
                     message_field.value = message_text;
                 }
@@ -259,7 +271,9 @@
         }
 
         chatSocket.onmessage = function (event) {
-            document.querySelector('.chat-messages').innerHTML += `<p>${event.data}</p>`;
+            let server_answer = JSON.parse(event.data);
+            if (server_answer.detail === 'error') toastr.error(server_answer.error_message, 'Помилка');
+            if (server_answer.detail === 'success') document.querySelector('.chat-messages').innerHTML += `<p>${server_answer.message}</p>`;
         }
     </script>
 </body>

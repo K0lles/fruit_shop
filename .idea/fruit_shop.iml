@@ -20,6 +20,7 @@
     <orderEntry type="library" name="toastr.js" level="application" />
     <orderEntry type="library" name="bootstrap-toaster" level="application" />
     <orderEntry type="library" name="toastr" level="application" />
+    <orderEntry type="library" name="js-cookie" level="application" />
   </component>
   <component name="TemplatesService">
     <option name="TEMPLATE_CONFIGURATION" value="Django" />
