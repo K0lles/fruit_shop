@@ -1,3 +1,12 @@
+// Sets for chat socket onmessage event for adding new messages to message list
+function set_onmessage_chat() {
+    chatSocket.onmessage = function (event) {
+        let server_answer = JSON.parse(event.data);
+        if (server_answer.detail === 'error') toastr.error(server_answer.error_message, 'Помилка');
+        if (server_answer.detail === 'success') document.querySelector('.chat-messages').innerHTML += `<p>${server_answer.message}</p>`;
+    }
+}
+
 // Delete from header logout form and added there login
 function changeToLoginForm() {
     let header_list = $('#header-list');
@@ -65,7 +74,9 @@ function logout() {
     })
 }
 
+// Reconnects to the WebSocket (used after login or logout)
 function reconnect_websocket() {
     chatSocket.close();
     chatSocket = new WebSocket('ws://' + window.location.host + '/ws/chat/');
+    set_onmessage_chat();
 }

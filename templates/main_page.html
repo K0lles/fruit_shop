@@ -249,6 +249,7 @@
 
         document.getElementById('action-list').style.height = (window.innerHeight - 159).toString() + 'px';
         let chatSocket = new WebSocket('ws://' + window.location.host + '/ws/chat/');
+        set_onmessage_chat();
 
         document.querySelector('#id_message').onkeyup = function (event) {
             if (event.keyCode === 13) {
@@ -270,11 +271,6 @@
             }
         }
 
-        chatSocket.onmessage = function (event) {
-            let server_answer = JSON.parse(event.data);
-            if (server_answer.detail === 'error') toastr.error(server_answer.error_message, 'Помилка');
-            if (server_answer.detail === 'success') document.querySelector('.chat-messages').innerHTML += `<p>${server_answer.message}</p>`;
-        }
     </script>
 </body>
 </html>

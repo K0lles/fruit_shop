@@ -16,10 +16,8 @@
     <content url="file://$MODULE_DIR$" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="jquery-3.6.4" level="application" />
-    <orderEntry type="library" name="toastr.js" level="application" />
-    <orderEntry type="library" name="bootstrap-toaster" level="application" />
     <orderEntry type="library" name="toastr" level="application" />
+    <orderEntry type="library" name="js-cookie" level="application" />
     <orderEntry type="library" name="js-cookie" level="application" />
   </component>
   <component name="TemplatesService">
