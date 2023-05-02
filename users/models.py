@@ -16,7 +16,7 @@ class User(AbstractBaseUser):
     username = models.SlugField(unique=True)
     password = models.CharField(max_length=128)
 
-    REQUIRED_FIELDS = ['username', 'password']
+    REQUIRED_FIELDS = ['password']
 
     USERNAME_FIELD = 'username'
 
