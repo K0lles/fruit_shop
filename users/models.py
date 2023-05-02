@@ -3,7 +3,6 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 
 class UserManager(BaseUserManager):
-
     def create_user(self, username, password, **kwargs):
         username = AbstractBaseUser.normalize_username(username=username)
         user = self.model(username=username, **kwargs)
@@ -16,8 +15,8 @@ class User(AbstractBaseUser):
     username = models.SlugField(unique=True)
     password = models.CharField(max_length=128)
 
-    REQUIRED_FIELDS = ['password']
+    REQUIRED_FIELDS = ["password"]
 
-    USERNAME_FIELD = 'username'
+    USERNAME_FIELD = "username"
 
     objects = UserManager()
