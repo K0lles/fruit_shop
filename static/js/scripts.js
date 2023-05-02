@@ -2,8 +2,20 @@
 function set_onmessage_chat() {
     chatSocket.onmessage = function (event) {
         let server_answer = JSON.parse(event.data);
-        if (server_answer.detail === 'error') toastr.error(server_answer.error_message, 'Помилка');
-        if (server_answer.detail === 'success') document.querySelector('.chat-messages').innerHTML += `<p>${server_answer.message}</p>`;
+        let messages_div = $('.chat-messages');
+        if (server_answer['start_connection']) {
+            messages_div.empty();
+            for (let message of server_answer['messages']) {
+                messages_div.append(`<p>${message["formatted_date"]} ${message["user__username"]}: ${message["text"]}</p>`);
+            }
+        }
+        else {
+            if (server_answer.detail === 'error') toastr.error(server_answer["error_message"], 'Помилка');
+
+            if (server_answer.detail === 'success') {
+                messages_div.append(`<p>${server_answer["message"]["formatted_date"]} ${server_answer["message"]["user__username"]}: ${server_answer["message"]["text"]}</p>`);
+            }
+        }
     }
 }
 
@@ -30,7 +42,7 @@ function changeToLogoutForm(username) {
     let header_list = $('#header-list');
     header_list.empty();
     header_list.append(
-        `<li class="nav-item" style="vertical-align: middle;">
+        `<li class="nav-item">
             <p>${username}</p>
          </li>
          <li class="nav-item">
